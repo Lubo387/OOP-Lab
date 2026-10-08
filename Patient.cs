@@ -17,19 +17,70 @@ namespace ClinicApp.Models
         public string FirstName
         {
             get => _firstName;
-            set => _firstName = value;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new ArgumentException(
+                        "Ім'я не може бути порожнім.",
+                        nameof(FirstName));
+                }
+
+                if (value.Length > 50)
+                {
+                    throw new ArgumentException(
+                        "Ім'я не може містити більше 50 символів.",
+                        nameof(FirstName));
+                }
+
+                _firstName = value;
+            }
         }
 
         public string LastName
         {
             get => _lastName;
-            set => _lastName = value;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new ArgumentException(
+                        "Прізвище не може бути порожнім.",
+                        nameof(LastName));
+                }
+
+                if (value.Length > 50)
+                {
+                    throw new ArgumentException(
+                        "Прізвище не може містити більше 50 символів.",
+                        nameof(LastName));
+                }
+
+                _lastName = value;
+            }
         }
 
         public DateTime DateOfBirth
         {
             get => _dateOfBirth;
-            set => _dateOfBirth = value;
+            set
+            {
+                if (value.Date > DateTime.Today)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(DateOfBirth),
+                        "Дата народження не може бути в майбутньому.");
+                }
+
+                if (value.Year < 1900)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(DateOfBirth),
+                        "Дата народження не може бути раніше 1900 року.");
+                }
+
+                _dateOfBirth = value;
+            }
         }
 
         public BloodType BloodType { get; set; }
@@ -37,7 +88,34 @@ namespace ClinicApp.Models
         public string Phone
         {
             get => _phone;
-            set => _phone = value;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new ArgumentException(
+                        "Телефон не може бути порожнім.",
+                        nameof(Phone));
+                }
+
+                if (value.Length != 10)
+                {
+                    throw new ArgumentException(
+                        "Телефон повинен містити рівно 10 символів.",
+                        nameof(Phone));
+                }
+
+                for (int i = 0; i < value.Length; i++)
+                {
+                    if (!char.IsDigit(value[i]))
+                    {
+                        throw new ArgumentException(
+                            "Телефон повинен містити лише цифри.",
+                            nameof(Phone));
+                    }
+                }
+
+                _phone = value;
+            }
         }
 
         public string Email { get; set; } = "";
