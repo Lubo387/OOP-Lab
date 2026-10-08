@@ -216,23 +216,40 @@ void PatientsMenu(Clinic c)
 
 void AddPatient(Clinic c)
 {
-    Console.Write("Ім'я: ");
-    string firstName = Console.ReadLine() ?? "";
+    try
+    {
+        Console.Write("Ім'я: ");
+        string firstName = Console.ReadLine() ?? "";
 
-    Console.Write("Прізвище: ");
-    string lastName = Console.ReadLine() ?? "";
+        Console.Write("Прізвище: ");
+        string lastName = Console.ReadLine() ?? "";
 
-    Console.Write("Дата народження (дд.мм.рррр): ");
-    DateTime.TryParse(Console.ReadLine(), out DateTime dob);
+        Console.Write("Дата народження (дд.мм.рррр): ");
+        DateTime.TryParse(Console.ReadLine(), out DateTime dob);
 
-    Console.Write("Група крові: ");
-    string bloodType = Console.ReadLine() ?? "";
+        Console.Write("Група крові: ");
+        string bloodType = Console.ReadLine() ?? "";
 
-    Console.Write("Телефон: ");
-    string phone = Console.ReadLine() ?? "";
+        Console.Write("Телефон: ");
+        string phone = Console.ReadLine() ?? "";
 
-    c.Patients.Add(
-        new Patient(firstName, lastName, dob, bloodType, phone));
+        Patient patient = new Patient(
+            firstName,
+            lastName,
+            dob,
+            bloodType,
+            phone);
+
+        c.Patients.Add(patient);
+    }
+    catch (ArgumentOutOfRangeException ex)
+    {
+        Console.WriteLine("Помилка: " + ex.Message);
+    }
+    catch (ArgumentException ex)
+    {
+        Console.WriteLine("Помилка: " + ex.Message);
+    }
 }
 
 void FindPatient(Clinic c)
@@ -310,29 +327,53 @@ void DoctorsMenu(Clinic c)
 
 void AddDoctor(Clinic c)
 {
-    Console.Write("Ім'я: ");
-    string firstName = Console.ReadLine() ?? "";
+    try
+    {
+        Console.Write("Ім'я: ");
+        string firstName = Console.ReadLine() ?? "";
 
-    Console.Write("Прізвище: ");
-    string lastName = Console.ReadLine() ?? "";
+        Console.Write("Прізвище: ");
+        string lastName = Console.ReadLine() ?? "";
 
-    Console.Write("Спеціальність: ");
-    string speciality = Console.ReadLine() ?? "";
+        Console.Write("Спеціальність: ");
+        string speciality = Console.ReadLine() ?? "";
 
-    Console.Write("Номер ліцензії: ");
-    string license = Console.ReadLine() ?? "";
+        Console.Write("Номер ліцензії: ");
+        string license = Console.ReadLine() ?? "";
 
-    Console.Write("Телефон: ");
-    string phone = Console.ReadLine() ?? "";
+        Console.Write("Телефон: ");
+        string phone = Console.ReadLine() ?? "";
 
-    Doctor doctor = new Doctor(
-        firstName,
-        lastName,
-        speciality,
-        license,
-        phone);
+        Console.Write("Початок роботи (0-23): ");
+        int startHour = int.Parse(Console.ReadLine() ?? "");
 
-    c.Doctors.Add(doctor);
+        Console.Write("Кінець роботи (1-24): ");
+        int endHour = int.Parse(Console.ReadLine() ?? "");
+
+        WorkSchedule schedule = new WorkSchedule(startHour, endHour);
+
+        Doctor doctor = new Doctor(
+            firstName,
+            lastName,
+            speciality,
+            license,
+            phone);
+
+        doctor.Schedule = schedule;
+        c.Doctors.Add(doctor);
+    }
+    catch (ArgumentOutOfRangeException ex)
+    {
+        Console.WriteLine("Помилка: " + ex.Message);
+    }
+    catch (ArgumentException ex)
+    {
+        Console.WriteLine("Помилка: " + ex.Message);
+    }
+    catch (FormatException ex)
+    {
+        Console.WriteLine("Помилка: введіть число. " + ex.Message);
+    }
 }
 
 void FindDoctor(Clinic c)
@@ -415,27 +456,41 @@ void AppointmentsMenu(Clinic c)
 
 void BookAppointment(Clinic c)
 {
-    c.Patients.DisplayAll();
-    c.Doctors.DisplayAll();
+    try
+    {
+        c.Patients.DisplayAll();
+        c.Doctors.DisplayAll();
 
-    Console.Write("ID пацієнта: ");
-    int.TryParse(Console.ReadLine(), out int patientId);
+        Console.Write("ID пацієнта: ");
+        int.TryParse(Console.ReadLine(), out int patientId);
 
-    Console.Write("ID лікаря: ");
-    int.TryParse(Console.ReadLine(), out int doctorId);
+        Console.Write("ID лікаря: ");
+        int.TryParse(Console.ReadLine(), out int doctorId);
 
-    Console.Write("Дата і час (дд.мм.рррр гг:хх): ");
-    DateTime.TryParse(Console.ReadLine(), out DateTime scheduledAt);
+        Console.Write("Дата і час (дд.мм.рррр гг:хх): ");
+        DateTime.TryParse(Console.ReadLine(), out DateTime scheduledAt);
 
-    Console.Write("Тривалість у хвилинах (Enter = 30): ");
-    string durationInput = Console.ReadLine() ?? "";
+        Console.Write("Тривалість у хвилинах (Enter = 30): ");
+        string durationInput = Console.ReadLine() ?? "";
+        int duration = 30;
 
-    int duration = 30;
+        if (!string.IsNullOrWhiteSpace(durationInput))
+            int.TryParse(durationInput, out duration);
 
-    if (!string.IsNullOrWhiteSpace(durationInput))
-        int.TryParse(durationInput, out duration);
-
-    c.Appointments.Book(patientId, doctorId, scheduledAt, duration);
+        c.Appointments.Book(
+            patientId,
+            doctorId,
+            scheduledAt,
+            duration);
+    }
+    catch (ArgumentOutOfRangeException ex)
+    {
+        Console.WriteLine("Помилка: " + ex.Message);
+    }
+    catch (ArgumentException ex)
+    {
+        Console.WriteLine("Помилка: " + ex.Message);
+    }
 }
 
 void CancelAppointment(Clinic c)
