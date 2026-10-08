@@ -1,15 +1,45 @@
-namespace ClinicApp
+using ClinicApp.Enums;
+using ClinicApp.Utils;
+
+namespace ClinicApp.Models
 {
     public class Doctor
     {
         private static int _nextId = 1;
 
+        private string _firstName = "";
+        private string _lastName = "";
+        private string _licenseNumber = "";
+        private string _phone = "";
+
         public int Id { get; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+
+        public string FirstName
+        {
+            get => _firstName;
+            set => _firstName = value;
+        }
+
+        public string LastName
+        {
+            get => _lastName;
+            set => _lastName = value;
+        }
+
         public Speciality Speciality { get; set; }
-        public string LicenseNumber { get; set; }
-        public string Phone { get; set; }
+
+        public string LicenseNumber
+        {
+            get => _licenseNumber;
+            set => _licenseNumber = value;
+        }
+
+        public string Phone
+        {
+            get => _phone;
+            set => _phone = value;
+        }
+
         public WorkSchedule Schedule { get; set; }
 
         public string FullName => FirstName + " " + LastName;
@@ -31,20 +61,35 @@ namespace ClinicApp
         {
         }
 
-        public Doctor(string firstName, string lastName, string speciality, string licenseNumber, string phone)
-            : this(firstName, lastName, ClinicFormatter.ParseSpeciality(speciality), licenseNumber, phone)
+        public Doctor(
+            string firstName,
+            string lastName,
+            string speciality,
+            string licenseNumber,
+            string phone)
+            : this(
+                firstName,
+                lastName,
+                ClinicFormatter.ParseSpeciality(speciality),
+                licenseNumber,
+                phone)
         {
         }
 
-        public Doctor(string firstName, string lastName, Speciality speciality, string licenseNumber, string phone)
+        public Doctor(
+            string firstName,
+            string lastName,
+            Speciality speciality,
+            string licenseNumber,
+            string phone)
         {
-            Id = _nextId++;
             FirstName = firstName;
             LastName = lastName;
             Speciality = speciality;
             LicenseNumber = licenseNumber;
             Phone = phone;
             Schedule = new WorkSchedule(8, 17);
+            Id = _nextId++;
         }
 
         public bool CanAcceptAt(int hour)
@@ -54,7 +99,9 @@ namespace ClinicApp
 
         public override string ToString()
         {
-            string status = IsAvailableNow ? "доступний зараз" : "не в робочий час";
+            string status = IsAvailableNow
+                ? "доступний зараз"
+                : "не в робочий час";
 
             return "[" + Id + "] " + FullName
                 + " | " + ClinicFormatter.FormatSpeciality(Speciality)
@@ -65,4 +112,3 @@ namespace ClinicApp
         }
     }
 }
-//1

@@ -1,16 +1,47 @@
-namespace ClinicApp
+using System;
+using ClinicApp.Enums;
+using ClinicApp.Utils;
+
+namespace ClinicApp.Models
 {
     public class Patient
     {
         private static int _nextId = 1;
 
+        private string _firstName = "";
+        private string _lastName = "";
+        private DateTime _dateOfBirth;
+        private string _phone = "";
+
         public int Id { get; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public string FirstName
+        {
+            get => _firstName;
+            set => _firstName = value;
+        }
+
+        public string LastName
+        {
+            get => _lastName;
+            set => _lastName = value;
+        }
+
+        public DateTime DateOfBirth
+        {
+            get => _dateOfBirth;
+            set => _dateOfBirth = value;
+        }
+
         public BloodType BloodType { get; set; }
-        public string Phone { get; set; }
-        public string Email { get; set; }
+
+        public string Phone
+        {
+            get => _phone;
+            set => _phone = value;
+        }
+
+        public string Email { get; set; } = "";
+
         public string FullName => FirstName + " " + LastName;
 
         public int Age
@@ -18,8 +49,10 @@ namespace ClinicApp
             get
             {
                 int age = DateTime.Today.Year - DateOfBirth.Year;
+
                 if (DateOfBirth.Date > DateTime.Today.AddYears(-age))
                     age--;
+
                 return age;
             }
         }
@@ -31,29 +64,55 @@ namespace ClinicApp
         }
 
         public Patient(string firstName, string lastName)
-            : this(firstName, lastName, DateTime.Today.AddYears(-26), BloodType.Unknown, "0000000000")
+            : this(
+                firstName,
+                lastName,
+                DateTime.Today.AddYears(-26),
+                BloodType.Unknown,
+                "0000000000")
         {
         }
 
-        public Patient(string firstName, string lastName, DateTime dateOfBirth, BloodType bloodType, string phone)
+        public Patient(
+            string firstName,
+            string lastName,
+            DateTime dateOfBirth,
+            BloodType bloodType,
+            string phone)
         {
-            Id = _nextId++;
             FirstName = firstName;
             LastName = lastName;
             DateOfBirth = dateOfBirth;
             BloodType = bloodType;
             Phone = phone;
             Email = "";
+            Id = _nextId++;
         }
 
-        public Patient(string firstName, string lastName, DateTime dateOfBirth, string bloodType, string phone)
-            : this(firstName, lastName, dateOfBirth, ClinicFormatter.ParseBloodType(bloodType), phone)
+        public Patient(
+            string firstName,
+            string lastName,
+            DateTime dateOfBirth,
+            string bloodType,
+            string phone)
+            : this(
+                firstName,
+                lastName,
+                dateOfBirth,
+                ClinicFormatter.ParseBloodType(bloodType),
+                phone)
         {
         }
 
         public string GetAgeCategory()
         {
-            return Age < 18 ? "дитина" : Age < 60 ? "дорослий" : "літній";
+            if (Age < 18)
+                return "дитина";
+
+            if (Age < 60)
+                return "дорослий";
+
+            return "літній";
         }
 
         public override string ToString()
@@ -66,4 +125,3 @@ namespace ClinicApp
         }
     }
 }
-//1
