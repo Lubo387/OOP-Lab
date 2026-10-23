@@ -248,6 +248,19 @@ namespace ClinicApp.Managers
             return result;
         }
 
+        public static int CancelAll(ICancellable[] items, string reason = "")
+        {
+            int cancelledCount = 0;
+
+            for (int i = 0; i < items.Length; i++)
+            {
+                if (items[i].Cancel(reason))
+                    cancelledCount++;
+            }
+
+            return cancelledCount;
+        }
+
         public Appointment[] GetAll()
         {
             Appointment[] result = new Appointment[_count];
