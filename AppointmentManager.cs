@@ -312,6 +312,81 @@ namespace ClinicApp.Managers
             return result;
         }
 
+        public Appointment[] GetUrgent()
+        {
+            int found = 0;
+
+            for (int i = 0; i < _count; i++)
+            {
+                if (_appointments[i] is UrgentAppointment)
+                    found++;
+            }
+
+            Appointment[] result = new Appointment[found];
+            int index = 0;
+
+            for (int i = 0; i < _count; i++)
+            {
+                if (_appointments[i] is UrgentAppointment)
+                {
+                    result[index] = _appointments[i];
+                    index++;
+                }
+            }
+
+            return result;
+        }
+
+        public Appointment[] GetSpecialist()
+        {
+            int found = 0;
+
+            for (int i = 0; i < _count; i++)
+            {
+                if (_appointments[i] is SpecialistAppointment)
+                    found++;
+            }
+
+            Appointment[] result = new Appointment[found];
+            int index = 0;
+
+            for (int i = 0; i < _count; i++)
+            {
+                if (_appointments[i] is SpecialistAppointment)
+                {
+                    result[index] = _appointments[i];
+                    index++;
+                }
+            }
+
+            return result;
+        }
+
+        public Appointment[] GetRegular()
+        {
+            int found = 0;
+
+            for (int i = 0; i < _count; i++)
+            {
+                if (_appointments[i] is RegularAppointment)
+                    found++;
+            }
+
+            Appointment[] result = new Appointment[found];
+            int index = 0;
+
+            for (int i = 0; i < _count; i++)
+            {
+                if (_appointments[i] is RegularAppointment)
+                {
+                    result[index] = _appointments[i];
+                    index++;
+                }
+            }
+
+            return result;
+        }
+
         public void DisplayAppointment(Appointment appointment)
         {
             Patient? patient = _patients.FindById(appointment.PatientId);
@@ -327,10 +402,12 @@ namespace ClinicApp.Managers
 
             string line =
                 "[" + appointment.Id + "] " +
+                appointment.GetDescription() + " | " +
                 patientName + " → " + doctorName +
                 " | " + appointment.ScheduledAt.ToString("dd.MM.yyyy HH:mm") +
                 "–" + appointment.EndsAt.ToString("HH:mm") +
-                " | " + appointment.Status;
+                " | " + appointment.Status +
+                " | " + appointment.GetCost().ToString("F2") + " грн";
 
             if (appointment.Notes.Length > 0)
                 line += " | " + appointment.Notes;

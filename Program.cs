@@ -472,6 +472,7 @@ void AppointmentsMenu(Clinic c)
         Console.WriteLine("5. Записи пацієнта");
         Console.WriteLine("6. Записи лікаря");
         Console.WriteLine("8. Скасувати всі записи пацієнта");
+        Console.WriteLine("9. За типом прийому");
         Console.WriteLine("0. Назад");
         Console.Write("Ваш вибір: ");
 
@@ -500,6 +501,9 @@ void AppointmentsMenu(Clinic c)
                 break;
             case "8":
                 CancelPatientAppointments(c);
+                break;
+            case "9":
+                ShowAppointmentsByType(c);
                 break;
             case "0":
                 back = true;
@@ -585,6 +589,34 @@ void ShowDoctorAppointments(Clinic c)
 
     c.Appointments.DisplayList(
         c.Appointments.GetByDoctor(doctorId));
+}
+
+void ShowAppointmentsByType(Clinic c)
+{
+    Console.WriteLine();
+    Console.WriteLine("--- Записи за типом прийому ---");
+    Console.WriteLine("1. Термінові");
+    Console.WriteLine("2. Консультації спеціаліста");
+    Console.WriteLine("3. Звичайні");
+    Console.Write("Ваш вибір: ");
+
+    string choice = Console.ReadLine() ?? "";
+
+    switch (choice)
+    {
+        case "1":
+            c.Appointments.DisplayList(c.Appointments.GetUrgent());
+            break;
+        case "2":
+            c.Appointments.DisplayList(c.Appointments.GetSpecialist());
+            break;
+        case "3":
+            c.Appointments.DisplayList(c.Appointments.GetRegular());
+            break;
+        default:
+            Console.WriteLine("Невірний вибір.");
+            break;
+    }
 }
 
 void TestGrowableManager()
