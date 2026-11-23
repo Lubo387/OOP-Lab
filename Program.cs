@@ -14,6 +14,18 @@ CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
 Clinic clinic = new Clinic("Медична Клініка");
 SeedData(clinic);
 
+if (clinic.Session.Exists())
+{
+    Console.Write("Знайдено збережену сесію. Завантажити? (y/n): ");
+    string loadChoice = (Console.ReadLine() ?? "").Trim().ToLower();
+
+    if (loadChoice == "y")
+    {
+        int loadedPatients = clinic.Session.Load(clinic);
+        Console.WriteLine($"Завантажено {loadedPatients} пацієнтів.");
+    }
+}
+
 DemonstrateWorkScheduleValueType();
 DemonstrateAppointmentPolymorphism();
 
@@ -87,6 +99,15 @@ while (running)
             FilesMenu(clinic);
             break;
         case "0":
+            Console.Write("Зберегти сесію? (y/n): ");
+            string saveChoice = (Console.ReadLine() ?? "").Trim().ToLower();
+
+            if (saveChoice == "y")
+            {
+                clinic.Session.Save(clinic);
+                Console.WriteLine("Сесію збережено.");
+            }
+
             running = false;
             break;
         default:
