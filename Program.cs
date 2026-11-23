@@ -106,6 +106,7 @@ void FilesMenu(Clinic c)
         Console.WriteLine("1. Останні рядки лога");
         Console.WriteLine("2. Очистити лог");
         Console.WriteLine("3. Експортувати всі звіти");
+        Console.WriteLine("4. Імпорт пацієнтів з CSV");
         Console.WriteLine("0. Назад");
         Console.Write("Оберіть: ");
 
@@ -145,6 +146,14 @@ void FilesMenu(Clinic c)
                     c.Logger.LogError("Помилка експорту: " + ex.Message);
                     Console.WriteLine("Помилка експорту: " + ex.Message);
                 }
+                break;
+            case "4":
+                Console.Write("Шлях до CSV-файлу: ");
+                string filePath = Console.ReadLine() ?? "";
+                ImportResult result = new CsvImporter().ImportPatients(c, filePath);
+                result.Print();
+                c.Logger.LogInfo(
+                    $"Імпорт CSV завершено. Імпортовано: {result.Imported}, пропущено: {result.Skipped}.");
                 break;
             case "0":
                 back = true;
