@@ -105,6 +105,7 @@ void FilesMenu(Clinic c)
         Console.WriteLine("── Файли ─────────────────────────────");
         Console.WriteLine("1. Останні рядки лога");
         Console.WriteLine("2. Очистити лог");
+        Console.WriteLine("3. Експортувати всі звіти");
         Console.WriteLine("0. Назад");
         Console.Write("Оберіть: ");
 
@@ -129,6 +130,21 @@ void FilesMenu(Clinic c)
             case "2":
                 c.Logger.Clear();
                 Console.WriteLine("Лог очищено.");
+                break;
+            case "3":
+                try
+                {
+                    string[] paths = c.Exporter.ExportAll();
+
+                    Console.WriteLine("Створено звіти:");
+                    foreach (string path in paths)
+                        Console.WriteLine(path);
+                }
+                catch (Exception ex)
+                {
+                    c.Logger.LogError("Помилка експорту: " + ex.Message);
+                    Console.WriteLine("Помилка експорту: " + ex.Message);
+                }
                 break;
             case "0":
                 back = true;
