@@ -101,6 +101,10 @@ while (running)
             FilesMenu(clinic);
             break;
         case "0":
+            clinic.Tracker.PrintSummary();
+            clinic.Tracker.SaveSummary();
+            Console.WriteLine("Підсумок сесії збережено у session_summary.txt.");
+
             Console.Write("Зберегти сесію? (y/n): ");
             string saveChoice = (Console.ReadLine() ?? "").Trim().ToLower();
 
