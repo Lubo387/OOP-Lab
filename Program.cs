@@ -487,8 +487,6 @@ void AddPatient(Clinic c)
             phone);
 
         c.Patients.Add(patient);
-        c.Logger.LogInfo(
-            $"Додано пацієнта #{patient.Id}: {patient.FullName}");
     }
     catch (ArgumentOutOfRangeException ex)
     {
@@ -749,13 +747,6 @@ void BookAppointment(Clinic c)
             scheduledAt,
             duration);
 
-        if (booked)
-        {
-            Appointment[] appointments = c.Appointments.GetAll();
-            Appointment created = appointments[appointments.Length - 1];
-            c.Logger.LogInfo(
-                $"Запис #{created.Id} створено: пацієнт #{patientId} → лікар #{doctorId}");
-        }
     }
     catch (ArgumentOutOfRangeException ex)
     {
@@ -777,8 +768,7 @@ void CancelAppointment(Clinic c)
     Console.Write("Причина (Enter = без причини): ");
     string reason = Console.ReadLine() ?? "";
 
-    if (c.Appointments.Cancel(cancelId, reason))
-        c.Logger.LogInfo($"Запис #{cancelId} скасовано. Причина: {reason}");
+    c.Appointments.Cancel(cancelId, reason);
 }
 
 void CompleteAppointment(Clinic c)
@@ -786,8 +776,7 @@ void CompleteAppointment(Clinic c)
     Console.Write("ID запису для завершення: ");
     int.TryParse(Console.ReadLine(), out int completeId);
 
-    if (c.Appointments.Complete(completeId))
-        c.Logger.LogInfo($"Запис #{completeId} завершено.");
+    c.Appointments.Complete(completeId);
 }
 
 void ShowPatientAppointments(Clinic c)
@@ -1005,7 +994,6 @@ void BillingMenu(Clinic c)
 
                 if (c.Billing.PayAppointment(appointmentId))
                 {
-                    c.Logger.LogInfo($"Запис #{appointmentId} оплачено.");
                     Console.WriteLine("Запис [" + appointmentId + "] оплачено.");
                 }
                 else
@@ -1032,7 +1020,7 @@ void CancelPatientAppointments(Clinic c)
     Console.Write("Причина (Enter — без причини): ");
     string reason = Console.ReadLine() ?? "";
     Appointment[] appointments = c.Appointments.GetByPatient(patientId);
-    int cancelled = AppointmentManager.CancelAll(appointments, reason);
+    int cancelled = c.Appointments.CancelAll(appointments, reason);
 
     Console.WriteLine("Скасовано записів: " + cancelled);
 }
@@ -1201,7 +1189,7 @@ void ChangeTreatmentPlanStatus(Clinic c, string action)
             changed = plan.Activate();
             break;
         case "complete":
-            changed = plan.Complete();
+            changed = c.TreatmentPlans.Complete(planId);
             break;
         case "cancel":
             changed = plan.Cancel();

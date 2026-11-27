@@ -1,6 +1,5 @@
 using System;
 using ClinicApp.Models;
-using ClinicApp.Interfaces;
 using ClinicApp.Events;
 
 namespace ClinicApp.Managers
@@ -16,6 +15,9 @@ namespace ClinicApp.Managers
         public int Count => _count;
 
         public event EventHandler<AppointmentEventArgs>? AppointmentBooked;
+        public event EventHandler<AppointmentEventArgs>? AppointmentCancelled;
+        public event EventHandler<AppointmentEventArgs>? AppointmentCompleted;
+        public event EventHandler<AppointmentEventArgs>? UrgentAppointmentBooked;
 
         public Appointment? this[int index]
         {
@@ -65,7 +67,16 @@ namespace ClinicApp.Managers
                 urgencyNote,
                 durationMinutes);
 
-            return AddAppointment(appointment);
+            bool booked = AddAppointment(appointment);
+
+            if (booked)
+            {
+                UrgentAppointmentBooked?.Invoke(
+                    this,
+                    CreateEventArgs(appointment));
+            }
+
+            return booked;
         }
 
         public bool BookSpecialist(
@@ -151,6 +162,10 @@ namespace ClinicApp.Managers
 
             if (cancelled)
             {
+                AppointmentCancelled?.Invoke(
+                    this,
+                    CreateEventArgs(appointment));
+
                 Console.WriteLine("Запис [" + id + "] скасовано.");
             }
             else
@@ -177,6 +192,10 @@ namespace ClinicApp.Managers
 
             if (completed)
             {
+                AppointmentCompleted?.Invoke(
+                    this,
+                    CreateEventArgs(appointment));
+
                 Console.WriteLine("Запис [" + id + "] завершено.");
             }
             else
@@ -294,13 +313,13 @@ namespace ClinicApp.Managers
             return result;
         }
 
-        public static int CancelAll(ICancellable[] items, string reason = "")
+        public int CancelAll(Appointment[] items, string reason = "")
         {
             int cancelledCount = 0;
 
             for (int i = 0; i < items.Length; i++)
             {
-                if (items[i].Cancel(reason))
+                if (Cancel(items[i].Id, reason))
                     cancelledCount++;
             }
 
